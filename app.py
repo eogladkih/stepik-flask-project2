@@ -1,7 +1,8 @@
-from flask import Flask, render_template, request as flask_req, redirect, url_for
+from flask import Flask, render_template, request as flask_req
 import json
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, RadioField
+from wtforms.validators import InputRequired
 import random
 
 app = Flask(__name__)
@@ -57,8 +58,8 @@ def getRndTeachers():
 
 
 class OrderForm(FlaskForm):
-    clientName = StringField('Вас зовут')
-    clientPhone = StringField('Ваш телефон')
+    clientName = StringField('Вас зовут', validators=[InputRequired()])
+    clientPhone = StringField('Ваш телефон', validators=[InputRequired()])
     clientSubmit = SubmitField('Записаться на пробный урок')
 
 
