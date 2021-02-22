@@ -96,8 +96,8 @@ def goals(goal):
 
 @app.route('/profiles/<int:id_teacher>/')
 def profiles(id_teacher):
-    if get_teacher(id_teacher):
-        item = get_teacher(id_teacher)
+    item = get_teacher(id_teacher)
+    if item:
         free_time = t_free(id_teacher)
         return render_template('profile.html', data=item, free_time=free_time, day_dict=day_dict, goals_dict=goals_dict)
     return render_template('page_not_found.html'), 404
