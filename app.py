@@ -1,9 +1,11 @@
-from flask import Flask, render_template, request as flask_req
 import json
+import random
+
+from flask import Flask, render_template, request as flask_req
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, RadioField
 from wtforms.validators import InputRequired
-import random
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'sd;lfjsalfh;sajf;ldsa;cdsa;flsmc.,xzlksahkflh'
