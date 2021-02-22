@@ -34,12 +34,12 @@ def t_free(teacher_id):
             if item['id'] == teacher_id:
                 for k, v in item['free'][en_day].items():
                     if v:
-                        free_td .append(k)
+                        free_td.append(k)
                 free_time[en_day] = free_td
     return free_time
 
 
-def getteacher(id):
+def get_teacher(id):
     for item in teachers:
         if item['id'] == id:
             return item
@@ -47,14 +47,15 @@ def getteacher(id):
         return False
 
 
-def getbygoal(goal):
+def get_by_goal(goal):
     getbygoal_list = []
     for item in teachers:
         if goal in item['goals']:
             getbygoal_list.append(item)
     return getbygoal_list
 
-def getRndTeachers():
+
+def get_rnd_teachers():
     random6 = random.choices(teachers, k=6)
     return random6
 
@@ -77,7 +78,7 @@ class RequestForm(FlaskForm):
 
 @app.route('/')
 def index():
-    data = getRndTeachers()
+    data = get_rnd_teachers()
     return render_template("index.html", data=data)
 
 
@@ -89,14 +90,14 @@ def all():
 
 @app.route('/goals/<goal>/')
 def goals(goal):
-    data = getbygoal(goal)
+    data = get_by_goal(goal)
     return render_template('goal.html', data=data, goal=goal, goals_dict=goals_dict)
 
 
 @app.route('/profiles/<int:id_teacher>/')
 def profiles(id_teacher):
-    if getteacher(id_teacher):
-        item = getteacher(id_teacher)
+    if get_teacher(id_teacher):
+        item = get_teacher(id_teacher)
         free_time = t_free(id_teacher)
         return render_template('profile.html', data=item, free_time=free_time, day_dict=day_dict, goals_dict=goals_dict)
     return render_template('page_not_found.html'), 404
@@ -116,7 +117,7 @@ def request_done():
 
 @app.route('/booking/<int:id_teacher>/<string:dw>/<time>/')
 def booking_form(id_teacher, dw, time):
-    data = getteacher(id_teacher)
+    data = get_teacher(id_teacher)
     form = OrderForm()
     return render_template('booking.html', data=data, dw=dw, time=time, day_dict=day_dict, id=id_teacher, form=form)
 
