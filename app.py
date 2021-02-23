@@ -1,3 +1,4 @@
+import os
 import json
 import random
 
@@ -5,10 +6,15 @@ from flask import Flask, render_template, request as flask_req
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, RadioField
 from wtforms.validators import InputRequired
-
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'sd;lfjsalfh;sajf;ldsa;cdsa;flsmc.,xzlksahkflh'
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 with open('teachers.json', 'r') as t:
     teachers = json.load(t)
@@ -60,6 +66,55 @@ def get_rnd_teachers():
     return random6
 
 
+# SQLAlchemy Classes
+class DictDay(db.Model):
+    __tablename__ = 'dict_days'
+    id = db.Column(db.Integer, primary_key=True)
+    day_ru = db.Column(db.String, unique=True, nullable=False)
+    day_en = db.Column(db.String, unique=True, nullable=False)
+
+
+class DictGoal(db.Model):
+    __tablename__ = 'dict_goals'
+    id = db.Column(db.Integer, primary_key=True)
+    goal_ru = db.Column(db.String, unique=True, nullable=False)
+    goal_en = db.Column(db.String, unique=True, nullable=False)
+
+
+class Teacher(db.Model):
+    __tablename__ = 'teachers'
+    id = db.Column(db.Integer, primary_key=True)
+    json_id = db.Column(db.Integer)
+    name = db.Column(db.String, unique=True, nullable=False)
+    about = db.Column(db.String)
+    free = db.Column(db.JSON)
+    goals = db.Column(db.String)
+    picture = db.Column(db.String)
+    price = db.Column(db.Integer)
+    rating = db.Column(db.Float)
+    students = db.relationship('Booking', backref='teacher')
+
+
+class Booking(db.Model):
+    __tablename__ = 'booking'
+    id = db.Column(db.Integer, primary_key=True)
+    student_name = db.Column(db.String)
+    student_phone = db.Column(db.String, nullable=False)
+    teacher_id = db.Column(db.Integer, db.ForeignKey('teachers.id'))
+    day = db.Column(db.String, nullable=False)
+    time = db.Column(db.String, nullable=False)
+
+
+class Request(db.Model):
+    __tablename__ = 'requests'
+    id = db.Column(db.Integer, primary_key=True)
+    client_purpose = db.Column(db.String, nullable=False)
+    client_time = db.Column(db.String, nullable=False)
+    client_name = db.Column(db.String)
+    client_phone = db.Column(db.String, nullable=False)
+
+
+# FlaskForm Classes
 class OrderForm(FlaskForm):
     clientName = StringField('Вас зовут', validators=[InputRequired()])
     clientPhone = StringField('Ваш телефон', validators=[InputRequired()])
